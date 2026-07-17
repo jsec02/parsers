@@ -47,14 +47,27 @@ def load_inventory() -> dict:
 
 
 def get_machines(inventory: dict) -> None:
-    print(*inventory["machines"].keys())
+    if not inventory["machines"]:
+        print("No machines found", file=sys.stderr)
+        sys.exit(1)
+
+    print(*inventory["machines"])
 
 
 def get_tags(inventory: dict, machine: str) -> None:
+    if machine not in inventory["machines"]:
+        print(f"Unknown machine: {machine}", file=sys.stderr)
+        sys.exit(1)
+
+    tags = {}
+
     for key, value in inventory.items():
         if key != "machines" and machine in value["machines"]:
             sudo = "true" if value.get("sudo") else "false"
-            print(key, sudo)
+            tags[key] = sudo
+
+    for key, value in tags.items():
+        print(key, value)
 
 
 def get_linked_tags(inventory: dict) -> None:
@@ -69,11 +82,18 @@ def get_paths(inventory: dict, machine: str, *tags: str) -> None:
         sys.exit(1)
 
     if tags:
+        tag_paths = {}
+
         for tag in tags:
             if tag not in inventory or "paths" not in inventory[tag]:
                 print(f"Unknown tag: {tag}", file=sys.stderr)
                 sys.exit(1)
-            print(tag, *inventory[tag]["paths"])
+
+            tag_paths[tag] = inventory[tag]["paths"]
+
+        for tag in tag_paths:
+            print(tag, *tag_paths[tag])
+
     else:
         for key, value in inventory.items():
             if "paths" in value and machine in value["machines"]:
@@ -87,8 +107,8 @@ def get_links(inventory: dict, machine: str) -> None:
 
     for value in inventory.values():
         if "links" in value and machine in value["machines"]:
+            sudo = "true" if value.get("sudo") else "false"
             for source, target in value["links"].items():
-                sudo = "true" if value.get("sudo") else "false"
                 print(source, target, sudo)
 
 
