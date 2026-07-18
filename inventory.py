@@ -36,7 +36,7 @@ def parse_args() -> argparse.Namespace:
     package_managers = subparsers.add_parser("package_managers")
     package_managers.add_argument("machine")
 
-    subparsers.add_parser("all_package_managers")
+    subparsers.add_parser("machine_tags")
 
     return parser.parse_args()
 
@@ -134,6 +134,13 @@ def get_package_managers(inventory: dict, machine: str) -> None:
     print(*inventory["machines"][machine]["package_managers"].keys())
 
 
+def get_machine_tags(inventory: dict) -> None:
+    for key, value in inventory.items():
+        if "machines" in value:
+            for machine in value["machines"]:
+                print(key, machine)
+
+
 def main() -> None:
     inventory = load_inventory()
 
@@ -159,6 +166,9 @@ def main() -> None:
 
     elif args.command == "package_managers":
         get_package_managers(inventory, args.machine)
+
+    elif args.command == "machine_tags":
+        get_machine_tags(inventory)
 
 
 if __name__ == "__main__":
