@@ -138,7 +138,7 @@ def get_machine_tags(inventory: dict) -> None:
     for key, value in inventory.items():
         if "machines" in value:
             for machine in value["machines"]:
-                print(key, machine)
+                print(machine, key)
 
 
 def main() -> None:
