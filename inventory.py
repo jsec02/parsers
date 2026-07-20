@@ -120,7 +120,7 @@ def get_links(inventory: dict, machine: str) -> None:
 
         sudo = "true" if value.get("sudo") else "false"
         for source, target in value["links"].items():
-            print(source, target, sudo)
+            print(sudo, source, target)
 
 
 def get_packages(inventory: dict, machine: str, package_manager: str) -> None:
