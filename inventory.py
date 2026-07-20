@@ -69,7 +69,7 @@ def get_tags(inventory: dict, machine: str) -> None:
         tags[key] = sudo
 
     for key, value in tags.items():
-        print(key, value)
+        print(value, key)
 
 
 def get_linked_tags(inventory: dict) -> None:
