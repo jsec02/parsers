@@ -86,24 +86,27 @@ def get_paths(inventory: dict, machine: str, *tags: str) -> None:
         sys.exit(1)
 
     if tags:
-        tag_paths = {}
+        tag_paths = []
 
         for tag in tags:
             if tag not in inventory or "paths" not in inventory[tag]:
                 print(f"Unknown tag: {tag}", file=sys.stderr)
                 sys.exit(1)
 
-            tag_paths[tag] = inventory[tag]["paths"]
+            sudo = "true" if inventory[tag].get("sudo") else "false"
 
-        for tag in tag_paths:
-            print(tag, *tag_paths[tag])
+            tag_paths.append([sudo, tag, inventory[tag]["paths"]])
 
+        for sudo, tag, paths in tag_paths:
+            print(sudo, tag, *paths)
     else:
         for key, value in inventory.items():
             if "paths" not in value or machine not in value["machines"]:
                 continue
 
-            print(key, *value["paths"])
+            sudo = "true" if value.get("sudo") else "false"
+
+            print(sudo, key, *value["paths"])
 
 
 def get_links(inventory: dict, machine: str) -> None:
