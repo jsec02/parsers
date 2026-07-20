@@ -62,9 +62,11 @@ def get_tags(inventory: dict, machine: str) -> None:
     tags = {}
 
     for key, value in inventory.items():
-        if key != "machines" and machine in value["machines"]:
-            sudo = "true" if value.get("sudo") else "false"
-            tags[key] = sudo
+        if key == "machines" or machine not in value["machines"]:
+            continue
+
+        sudo = "true" if value.get("sudo") else "false"
+        tags[key] = sudo
 
     for key, value in tags.items():
         print(key, value)
@@ -72,8 +74,10 @@ def get_tags(inventory: dict, machine: str) -> None:
 
 def get_linked_tags(inventory: dict) -> None:
     for key, value in inventory.items():
-        if key != "machines" and "links" in value:
-            print(key)
+        if key == "machines" or "links" not in value:
+            continue
+
+        print(key)
 
 
 def get_paths(inventory: dict, machine: str, *tags: str) -> None:
@@ -96,8 +100,10 @@ def get_paths(inventory: dict, machine: str, *tags: str) -> None:
 
     else:
         for key, value in inventory.items():
-            if "paths" in value and machine in value["machines"]:
-                print(key, *value["paths"])
+            if "paths" not in value or machine not in value["machines"]:
+                continue
+
+            print(key, *value["paths"])
 
 
 def get_links(inventory: dict, machine: str) -> None:
@@ -106,10 +112,12 @@ def get_links(inventory: dict, machine: str) -> None:
         sys.exit(1)
 
     for value in inventory.values():
-        if "links" in value and machine in value["machines"]:
-            sudo = "true" if value.get("sudo") else "false"
-            for source, target in value["links"].items():
-                print(source, target, sudo)
+        if "links" not in value or machine not in value["machines"]:
+            continue
+
+        sudo = "true" if value.get("sudo") else "false"
+        for source, target in value["links"].items():
+            print(source, target, sudo)
 
 
 def get_packages(inventory: dict, machine: str, package_manager: str) -> None:
@@ -136,9 +144,11 @@ def get_package_managers(inventory: dict, machine: str) -> None:
 
 def get_machine_tags(inventory: dict) -> None:
     for key, value in inventory.items():
-        if "machines" in value:
-            for machine in value["machines"]:
-                print(machine, key)
+        if "machines" not in value:
+            continue
+
+        for machine in value["machines"]:
+            print(machine, key)
 
 
 def main() -> None:
