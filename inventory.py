@@ -62,7 +62,11 @@ def get_tags(inventory: dict, machine: str) -> None:
     tags = {}
 
     for key, value in inventory.items():
-        if key == "machines" or machine not in value["machines"] or "links" in value:
+        if (
+            key == "machines"
+            or machine not in value["machines"]
+            or "paths" not in value
+        ):
             continue
 
         sudo = "true" if value.get("sudo") else "false"
